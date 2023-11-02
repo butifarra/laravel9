@@ -28,7 +28,7 @@ class PostController extends Controller
     }
     public function create()
     {
-        return view('posts.create');
+        return view('posts.create', ['post' => new Post]);
     }
     public function store(Request $request)
     {
@@ -51,5 +51,23 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         return view('posts.edit', ['post' => $post]);
+    }
+    public function update(Request $request, Post $post) //El parámetro request lo manda Laravel solo
+    {
+        $request->validate([
+            'title' => ['required', 'min:4'],
+            'body' => ['required'],
+        ]);
+        //$post =  Post::find($post); No precisamos esto porque Laravel lo busca solo cuando lo recibe
+        $post->title = $request->input('title');
+        $post->body = $request->input('body');
+        $post->save(); //no enviamos el ID del post
+        //acá creo el mensaje, pero lo muestro en posts.index.blade.php o en layouts.app para que esté en todos lados disponible
+        session()->flash('status', 'Post updated!');
+
+        //return redirect()->route('posts.index');
+        //lo anterior se abrevia en este helper
+
+        return to_route('posts.show', $post);
     }
 }
