@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\http\Requests\SavePostRequest; //este es mi request
 use App\Models\Post;
 use PhpParser\Node\Stmt\Return_;
 
@@ -30,44 +31,56 @@ class PostController extends Controller
     {
         return view('posts.create', ['post' => new Post]);
     }
-    public function store(Request $request)
+    public function store(SavePostRequest $request)
     {
-        $request->validate([
+        /*  $validated = $request->validate([
             'title' => ['required', 'min:4'],
             'body' => ['required'],
-        ]);
-        $post = new Post;
+        ]); */
+        /* $post = new Post;
         $post->title = $request->input('title');
         $post->body = $request->input('body');
-        $post->save(); //no enviamos el ID del post
+        $post->save(); */ //no enviamos el ID del post
         //acá creo el mensaje, pero lo muestro en posts.index.blade.php o en layouts.app para que esté en todos lados disponible
-        session()->flash('status', 'Post created!');
+
+        /*  Post::create([
+            'title' => $request->input('title'),
+            'body' => $request->input('body')
+        ]); */
+        Post::create($request->validated());
+        //session()->flash('status', 'Post created!');
 
         //return redirect()->route('posts.index');
         //lo anterior se abrevia en este helper
 
-        return to_route('posts.index');
+        return to_route('posts.index')->with('status', 'Post created');
     }
     public function edit(Post $post)
     {
         return view('posts.edit', ['post' => $post]);
     }
-    public function update(Request $request, Post $post) //El parámetro request lo manda Laravel solo
+    public function update(SavePostRequest $request, Post $post) //El parámetro request lo manda Laravel solo
     {
-        $request->validate([
+        /*  $validated = $request->validate([
             'title' => ['required', 'min:4'],
             'body' => ['required'],
-        ]);
+        ]); */
         //$post =  Post::find($post); No precisamos esto porque Laravel lo busca solo cuando lo recibe
-        $post->title = $request->input('title');
+        /* $post->title = $request->input('title');
         $post->body = $request->input('body');
-        $post->save(); //no enviamos el ID del post
+        $post->save(); */ //no enviamos el ID del post
         //acá creo el mensaje, pero lo muestro en posts.index.blade.php o en layouts.app para que esté en todos lados disponible
-        session()->flash('status', 'Post updated!');
+        /* $post->update([
+            'title' => $request->input('title'),
+            'body' => $request->input('body'),
+        ]); */
+        $post->update($request->validated());
+        //session()->flash('status', 'Post updated!');
+
 
         //return redirect()->route('posts.index');
         //lo anterior se abrevia en este helper
 
-        return to_route('posts.show', $post);
+        return to_route('posts.show', $post)->with('status', 'Post updated!');
     }
 }
