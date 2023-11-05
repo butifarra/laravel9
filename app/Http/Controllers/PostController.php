@@ -10,6 +10,10 @@ use PhpParser\Node\Stmt\Return_;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth', ['except' => ['index', 'show']]);
+    }
     public function index()
     {
         $posts1 = [
@@ -82,5 +86,10 @@ class PostController extends Controller
         //lo anterior se abrevia en este helper
 
         return to_route('posts.show', $post)->with('status', 'Post updated!');
+    }
+    public function destroy(Post $post) //le digo que es de tipo modelo Post
+    {
+        $post->delete();
+        return to_route('posts.index')->with('status', 'Post deleted!');
     }
 }
