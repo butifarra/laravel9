@@ -37,6 +37,8 @@ class PostController extends Controller
     }
     public function store(SavePostRequest $request)
     {
+        //Esto lo comento TODO porque ese SavePostRequest es casero mío, ahí se valida todo.
+
         /*  $validated = $request->validate([
             'title' => ['required', 'min:4'],
             'body' => ['required'],
